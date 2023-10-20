@@ -5,6 +5,9 @@ serialParameter serialparameter;
 serialmain::serialmain(QWidget* parent) : QMainWindow(parent), ui(new Ui::serialmain) {
     ui->setupUi(this);
     serialPort = new QSerialPort;
+    connect(ui->button_search, SIGNAL(clicked()), this, SLOT(cfg_searchPorts()), Qt::UniqueConnection);
+    connect(ui->button_open, SIGNAL(clicked()), this, SLOT(cfg_setConfig()), Qt::UniqueConnection);
+    connect(ui->button_send, SIGNAL(clicked()), this, SLOT(cfg_searchPorts()), Qt::UniqueConnection);
 }
 
 serialmain::~serialmain() { delete ui; }

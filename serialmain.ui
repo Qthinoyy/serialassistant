@@ -14,7 +14,7 @@
    <string>serialmain</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="button_search">
     <property name="geometry">
      <rect>
       <x>140</x>
@@ -57,7 +57,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="button_send">
     <property name="geometry">
      <rect>
       <x>410</x>
@@ -70,7 +70,7 @@
      <string>发送</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="button_receive">
     <property name="geometry">
      <rect>
       <x>410</x>
@@ -270,7 +270,7 @@
      <rect>
       <x>134</x>
       <y>81</y>
-      <width>56</width>
+      <width>81</width>
       <height>18</height>
      </rect>
     </property>
@@ -354,6 +354,19 @@
     </property>
     <property name="text">
      <string>刷新速度：</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="button_open">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>130</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>打开</string>
     </property>
    </widget>
   </widget>
