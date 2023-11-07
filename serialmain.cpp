@@ -6,11 +6,21 @@ serialParameter serialparameter;
 
 serialmain::serialmain(QWidget *parent) : QMainWindow(parent), ui(new Ui::serialmain) {
     ui->setupUi(this);
+
+    subthread = new QThread;
     serialPort = new QSerialPort;
+    s_datathread = new datathread(serialPort);
+    serialPort->moveToThread(subthread);
+    s_datathread->moveToThread(subthread);
+    subthread->start();
     connect(ui->button_search, SIGNAL(clicked()), this, SLOT(cfg_searchPorts()), Qt::UniqueConnection);
     connect(ui->button_open, SIGNAL(clicked()), this, SLOT(cfg_openPort()), Qt::UniqueConnection);
-    connect(ui->button_send, SIGNAL(clicked()), this, SLOT(fun_send()), Qt::UniqueConnection);
+    //    connect(ui->button_send, SIGNAL(clicked()), this, SLOT(fun_send()), Qt::UniqueConnection);
     connect(ui->button_receive, SIGNAL(clicked()), this, SLOT(fun_receive()), Qt::UniqueConnection);
+
+    connect(this, SIGNAL(sig_receiveStart()), s_datathread, SLOT(publicProcess_serial_receiveStart()), Qt::UniqueConnection);
+    connect(this, SIGNAL(sig_receiveStop()), s_datathread, SLOT(publicProcess_serial_receiveStop()), Qt::UniqueConnection);
+    connect(this, SIGNAL(sig_sendSingle(QString)), s_datathread, SLOT(publicProcess_serial_sendSingle(QString)), Qt::UniqueConnection);
 }
 
 serialmain::~serialmain() {
@@ -55,6 +65,7 @@ void serialmain::cfg_openPort() {
             ui->button_open->setText("关闭");
             //串口状态标志位
             serialparameter.openStatus = true;
+            emit sig_receiveStart();
             break;
         case 1:
             //关闭串口
@@ -65,14 +76,20 @@ void serialmain::cfg_openPort() {
             ui->button_open->setText("打开");
             serialparameter.openStatus = false;
             //        serialPort->isOpen();
+            emit sig_receiveStop();
             break;
         default:;
     }
+#if LOGSWITCH
+    qDebug() << "serialparameter.openStatus" << serialparameter.openStatus << serialPort->isOpen() << serialPort->baudRate()
+             << serialPort->dataBits() << serialPort->stopBits() << serialPort->flowControl();
+#endif
 }
+
 void serialmain::fun_send() {
     if (!serialparameter.openStatus)
         return;
-    QString text = ui->lineEdit->text();
+    QString text = ui->lineEdit_sendSingle->text();
     qDebug() << "send";
     serialPort->write(text.toLatin1());
 }
@@ -83,4 +100,9 @@ void serialmain::fun_receive() {
     qDebug() << "receive";
     QByteArray buffer = serialPort->readAll();
     ui->textBrowser->append(((buffer)));
+}
+
+void serialmain::on_button_send_clicked() {
+    QString str = ui->lineEdit_sendSingle->text();
+    emit sig_sendSingle(str);
 }
